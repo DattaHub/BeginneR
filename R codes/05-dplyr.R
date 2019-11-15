@@ -21,11 +21,13 @@ cats[, "coat"]  ## usual way
 
 select(cats, coat)
 
+select(cats, sex)
+
 ## different outputs: data.frames instead of vectors 
 
 ## ------select multiple columns ------------------------------------------------------------------
 
-select(cats, coat, cat_id) #maintains order
+select(cats, coat, cat_id, fixed) #maintains order
 
 
 ## ---- 'Filtering the data -------------------------------------------------------------------
@@ -96,7 +98,7 @@ sort(round(sqrt(cats$age * 2), 3))
 
 ## It's written as `%>%`, and you can call it the "pipe" operator.
 
-cats$age * 2 %>% 
+(cats$age * 2) %>% 
   sqrt() %>%
   round(3) %>%
   sort()

@@ -8,11 +8,13 @@ getwd()
 # To set you working directory, use the `setwd()` command. 
 # We want to set the working directory to the location of our project.
 
-setwd("C:/Users/jd033/Box/R Users Group- UA/BeginneR/R codes")
+# setwd("C:/Users/jd033/Box/R Users Group- UA/BeginneR/R codes")
 
 ## Or wherever you're saving your codes 
 
 ## setwd("~/Documents/R") 
+
+setwd("~/GitHub/BeginneR/R codes")
 
 ## ----- Reading a CSV file ------------------------------------------------------------------
 # R function  `read.csv()` to load the data file into memory 
@@ -33,7 +35,7 @@ cats
 # thing - instead use the `head` command to view the first six lines or
 # the `View` command to open the dataset
 
-head(cats)
+head(cats, n = 2)
 View(cats)
 
 
@@ -69,11 +71,13 @@ head_meta <- cats[1:6, ] # Row 1-6 which is the same as head
 colnames(cats)
 cats$weight
 
+cats$wander_dist
+
 
 ## ----Multiple columns--------------------------------------------------------------------
 # Select more than one columns use the square brackets
 
-cats[ , c("weight", "coat")]
+cats[ , c("weight", "coat", "sex")]
 
 
 ## ------------------------------------------------------------------------
@@ -86,7 +90,7 @@ cats[4:7, c("weight", "coat")]
 ## ------------------------------------------------------------------------
 cats[cats$coat == "black", ]
 
-
+cats[cats$sex == "female", ]
 
 ## ------------------------------------------------------------------------
 # The logical statement returns a vector of `TRUE` and `FALSE` values. 
@@ -96,7 +100,7 @@ cats$coat == "black"
 ## ----use 'which'--------------------------------------------------------------------
 # `which()` finds the indexes of records meeting a logical statement
 
-which(cats$coat == "black")
+black_cat_idx = which(cats$coat == "black")
 
 
 
@@ -105,6 +109,7 @@ which(cats$coat == "black")
 
 cats[which(cats$coat == "black"), ]
 
+cats[black_cat_idx,]
 
 ## ------------------------------------------------------------------------
 # We can combine logical statements and index statements
