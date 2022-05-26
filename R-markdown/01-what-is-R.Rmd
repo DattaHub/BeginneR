@@ -1,7 +1,7 @@
 ---
 title: Before we start
 author: "Jyotishka Datta"
-date: "May 14, 2019"
+date: "`r Sys.Date()`"
 output: 
   pdf_document:
       toc: true

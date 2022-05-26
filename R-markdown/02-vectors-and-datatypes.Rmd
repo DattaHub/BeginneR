@@ -1,7 +1,7 @@
 ---
-title: Introduction to R
-author: "UA R Users Group"
-date: "May 14, 2019"
+title: Vectors and Data types
+author: "Jyotishka Datta"
+date: "`r Sys.Date()`"
 output: 
   pdf_document:
       toc: true

@@ -1,10 +1,11 @@
 ---
 title: "Common Statistical Techniques in R"
-date: "May 14, 2019"
+author: "Jyotishka Datta"
+date: "`r Sys.Date()`"
 output: 
   pdf_document:
       toc: true
-      number_sections: true
+      number_sections: false
 fontsize: 11pt
 geometry: margin=1in
 urlcolor: blue
@@ -124,7 +125,7 @@ ggplot(cats, aes(x = roamer, y = wander_dist)) +
 For logistic regression, we use the `glm` function.  It takes formula and data arguments like the `lm` function, but we also need to specify a family.  For logistic, we pass binomial as the family, which tells the `glm` function that we have a binary outcome, and we want to use the logit link function. 
 
 ```{r}
-roamer_fit <- glm(formula = roamer ~ wander_dist, data = cats, family = binomial )
+roamer_fit <- glm(formula = as.factor(roamer) ~ wander_dist, data = cats, family = binomial )
 ```
 
 ------------
@@ -140,7 +141,7 @@ glm_summary
 > 
 
 ```{r}
-roamer_fit <- glm(formula = roamer ~ wander_dist + weight, data = cats, family = binomial )
+roamer_fit <- glm(formula = as.factor(roamer) ~ wander_dist + weight, data = cats, family = binomial )
 summary(roamer_fit)
 ```
 ------------
@@ -148,13 +149,13 @@ summary(roamer_fit)
 We can look at the effects of multiple covariates on our binary outcome with logistic regression, just like with linear regression.  We just add as many variable names as we'd like to the right side of the formula argument, separated by `+` symbols.
 
 ```{r}
-ggplot(cats, aes(x = weight, y = wander_dist, color = roamer)) + 
+ggplot(cats, aes(x = weight, y = wander_dist, color = as.factor(roamer))) + 
   geom_point(size = 2) +
   geom_smooth(method = 'lm', se = FALSE, size = 3) +
   theme_bw(base_size = 18)
 
 # cats$roamer <- relevel(cats$roamer, ref = 'yes')
-roamer_fit <- glm(formula = roamer ~ wander_dist + weight, data = cats, family = binomial )
+roamer_fit <- glm(formula = as.factor(roamer) ~ wander_dist + weight, data = cats, family = binomial )
 glm_summary <- summary(roamer_fit)
 glm_summary
 

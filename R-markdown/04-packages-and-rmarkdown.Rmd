@@ -1,7 +1,7 @@
 ---
-title: Extending R with Packages & Literate Programming with RMarkdown
-author: "UA R Users Group"
-date: "May 14, 2019"
+title: Extending R with Packages and Literate Programming with RMarkdown
+author: "Jyotishka Datta"
+date: "`r Sys.Date()`"
 output: 
   pdf_document:
       toc: true
@@ -56,7 +56,7 @@ as.vector(installed.packages()[,"Package"])
 
 Most packages need to be loaded into the current environment to be accessible. RMarkdown is specially integrated in RStudio in a way that avoids this, but in general we load packages with the `library` command:
 
-```{r, eval = TRUE}
+```{r, eval = F}
 library(rmarkdown)  # notice the lack of quotes
 ```
 

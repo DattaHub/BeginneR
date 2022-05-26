@@ -1,12 +1,16 @@
 ---
 title: Data Visualization
-date: "May 14, 2019"
+author: "Jyotishka Datta"
+date: "`r Sys.Date()`"
 output: 
+  pdf_document:
+      toc: true
+      number_sections: false
   html_document:
       css: css/lesson.css
       toc: true
       number_sections: true
-fontsize: 11pt
+fontsize: 10pt
 geometry: margin=1in
 urlcolor: blue
 ---
@@ -23,7 +27,6 @@ When we are working with large sets of numbers it can be useful to display that 
 
 
 ```{r import data}
-library(dplyr)
 cats <- read.csv("data/herding-cats.csv")
 ```
 
@@ -94,7 +97,7 @@ ggplot(cats) +
                size = 3)
 ```
 
-###Scales
+##Scales
 
 Scales control the mapping between data and aesthetics.
 
@@ -108,7 +111,7 @@ ggplot(cats) +
     ggtitle(label = "Scatterplot")
 ```
 
-###Themes
+## Themes
 
 The ggplot2 theme system handles non-data plot elements such as:
 
@@ -125,7 +128,7 @@ ggplot(cats) +
     theme_bw()
 ```
 
-###Facets
+## Facets
 
 Facets display subsets of the dataset in different panels. Let's use the `facet_grid` function to lay out panels in a grid. Each panel will have the same geometric objects.
 
@@ -140,7 +143,7 @@ ggplot(cats) +
 
 Here we have two panels one for each factor level of `coat`. The panels are layed out in columns because the expression `. ~ coat` 
 
-###Writing figures to file
+## Writing figures to file
 
 There are two ways in which figures and plots can be output to a file (rather than simply displaying on screen).
 
@@ -162,7 +165,7 @@ ggplot(example_data) +
           axis.text = element_text(...)
 ```
 
-##Resources
+## Resources
 
 We have only scratched the surface here. There are many plotting features we haven't covered.
 
