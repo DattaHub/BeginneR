@@ -1,7 +1,6 @@
-# R Working Group Beginner's Workshop
+# R introduction: A Beginner's Workshop
 
-This is a repository for a "Beginner R Workshop" that was offered as part of University of Arkansas when I worked there, and since been replicated and modified a few times. 
-The codes are curated from a number of different sources including the excellent tutorials provided by the Ann Arbor R users' group, based on the [Software Carpentry](http://datacarpentry.org), [Rachel's R turorial](https://www.kaggle.com/rtatman/rachael-s-r-tutorials/notebook) and JD's own intro stats teaching materials. 
+This was originally a repository for a "Beginner's R Workshop" that was offered as part of University of Arkansas when I worked there, and since been replicated and modified a few times. The codes are not original or written by me, these are curated from a number of different sources including the excellent tutorials provided by the Ann Arbor R users' group, based on the [Software Carpentry](http://datacarpentry.org), [Rachel's R turorial](https://www.kaggle.com/rtatman/rachael-s-r-tutorials/notebook) and JD's own intro stats teaching materials. 
 
 
 The following topics are covered. Right now, only the beginners' workshop (stage 1) is built. We will build the next set of topics based on feedback from the group. 
