@@ -7,7 +7,10 @@ cats <- read.csv("data/herding-cats.csv")
 # scatter plot : graphical view of relationship between two sets of numbers.
 # scatterplot of birth weight by mother's age.
 
-plot(x = cats$age, y = cats$weight, pch = 2, main = "age vs. weight")
+plot(x = cats$age, y = cats$weight, pch = 15, col = rgb(1,0,0, 0.5), 
+     main = "age vs. weight")
+
+hist(cats$age)
 
 # For any plot you can customize many features of your graphs 
 # (fonts, colors, axes, titles) through graphic options (see pdf)
@@ -52,7 +55,7 @@ ggplot(cats) +
 
 ?geom_point
 
-ggplot(cats) + geom_point(aes(x = weight, y = wander_dist))
+ggplot(cats) + geom_point(aes(x = age, y = weight))
 
 ## ---- scatterplot-------------------------------------------------
 ggplot(cats) +
@@ -60,18 +63,13 @@ ggplot(cats) +
                color = "red",
                alpha = 0.5,
                shape = 1,
-               size = 3)+
-               theme_bw()
-
+               size = 3) + theme_minimal()
 
 ## -------Scales -----------------------------------------------------------------
 # Scales control the mapping between data and aesthetics.
 
 ggplot(cats) +
     geom_point(aes(x = age, y = weight)) +
-    scale_x_continuous(name = "Age",
-                       breaks = c(1, 2, 3),
-                       limits = c(-5, 15)) +
     scale_y_continuous("Weight", trans = "log") + 
     ggtitle(label = "Scatterplot")+
     theme_bw()
@@ -132,7 +130,7 @@ ggplot(dat) +
 # Fix angles of X-axis texts? 
 # Try the following: 
 
-ggplot(dat) +
+plt1 <- ggplot(dat) +
     geom_boxplot(aes(x = airline, y = avail_seat_km_per_week)) +
     ggtitle("Available seats vs Airline") +
     xlab("Airline") + ylab("Available Seats") +
@@ -141,12 +139,17 @@ ggplot(dat) +
 
 ## Scatterplot (with colours)
 
-ggplot(dat) +
+plt2 <- ggplot(dat) +
     geom_point(aes(y = fatalities_00_14, x = avail_seat_km_per_week)) +
     ggtitle("Fatalities vs. Available seats") +
     xlab("Available Seats") + ylab("Fatalities") + 
     theme_minimal()+
     theme(axis.text = element_text(angle = 45, size = 10))
+
+
+library(patchwork)
+
+plt1 + plt2
 
 
 ## Exercise 

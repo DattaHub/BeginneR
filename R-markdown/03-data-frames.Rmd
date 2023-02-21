@@ -38,7 +38,7 @@ getwd()
 
 To set you working directory, use the `setwd()` command. We want to set the working directory to the location of our project. For example: 
 ```{r, eval=FALSE}
-setwd("~/Workshops/UA-R-Users-Group")
+setwd("~/GitHub/BeginneR/R codes")
 ```
 
 

@@ -20,6 +20,8 @@ library("dplyr")
 
 ## -----Use the cats data ----------------------------------------------
 
+setwd("~/GitHub/BeginneR/R codes")
+
 cats <- read.csv("data/herding-cats-small.csv")
 
 
@@ -112,7 +114,7 @@ sort(round(sqrt(cats$age * 2), 3))
 #`dplyr` includes a special operator designed to make code *flow* 
 # and appear more readable.
 
-## It's written as `%>%`, and you can call it the "pipe" operator.
+## It's written as `%>%`, and you can call it the "pipe" operator. 
 
 (cats$age * 2) %>% 
   sqrt() %>%

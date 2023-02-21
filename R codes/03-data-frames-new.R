@@ -8,11 +8,7 @@ getwd()
 # To set you working directory, use the `setwd()` command. 
 # We want to set the working directory to the location of our project.
 
-# setwd("C:/Users/jyotishka/R Users Group/BeginneR/R codes")
-
 ## Or wherever you're saving your codes 
-
-## setwd("~/Documents/R") 
 
 setwd("~/GitHub/BeginneR/R codes")
 
@@ -99,7 +95,7 @@ cats[cats$sex == "female", ]
 
 ## ------------------------------------------------------------------------
 # The logical statement returns a vector of `TRUE` and `FALSE` values. 
-cats$coat == "black"
+which(cats$coat == "black")
 
 
 ## ----use 'which'--------------------------------------------------------------------
