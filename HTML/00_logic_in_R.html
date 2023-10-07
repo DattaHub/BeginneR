@@ -14,9 +14,15 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
+.title[
 # Basics of R
+]
+.author[
 ### Jyotishka Datta
-### 2020/01/24 (updated: 2022-01-25)
+]
+.date[
+### 2020/01/24 (updated: 2023-08-23)
+]
 
 ---
 
@@ -111,6 +117,10 @@ y = c(FALSE,TRUE,TRUE)
 ```
 
 ```
+## Warning in x || y: 'length(x) = 3 &gt; 1' in coercion to 'logical(1)'
+```
+
+```
 ## [1] TRUE
 ```
 ]
@@ -127,6 +137,12 @@ y = c(FALSE,TRUE,TRUE)
 
 ```r
   x &amp;&amp; y
+```
+
+```
+## Warning in x &amp;&amp; y: 'length(x) = 3 &gt; 1' in coercion to 'logical(1)'
+
+## Warning in x &amp;&amp; y: 'length(x) = 3 &gt; 1' in coercion to 'logical(1)'
 ```
 
 ```
@@ -297,12 +313,7 @@ if (x &gt;= 2)
 ```
 
 ```
-## Warning in if (x &gt;= 2) "Now Here!": the condition has length &gt; 1 and only the
-## first element will be used
-```
-
-```
-## [1] "Now Here!"
+## Error in if (x &gt;= 2) "Now Here!": the condition has length &gt; 1
 ```
 
 ---
@@ -669,10 +680,12 @@ If you were given the vector `x = c(3, 4, 12, 19, 23, 48, 50, 61, 63, 78)`, writ
 Your code should use *nested* loops to iterate through the vector of primes and `x`.
 
 ---
-class: middle
-count: false
+class: middle, bottom, segue
 
-# Functions
+
+## Next we will look at functions
+
+source: [https://r4ds.hadley.nz/functions.html](https://r4ds.hadley.nz/functions.html)
 
 ---
 
@@ -689,10 +702,209 @@ The goal of a function should be to encapsulate a *small* *reusable* piece of co
 * Better to change code in one location than code everywhere.
 
 ---
-class: middle, bottom, segue
+## When to use ...
+
+Writing a function has four big advantages over using copy-and-paste:
+
+-  You can give a function an evocative name that makes your code easier to understand.
+
+-  As requirements change, you only need to update code in one place, instead of many.
+
+-  You eliminate the chance of making incidental mistakes when you copy and paste (i.e. updating a variable name in one place, but not in another).
+
+-  It makes it easier to reuse work from project-to-project, increasing your productivity over time.
+
+Rule-of-thumb: did you copy-paste a block of code more than twice? 
+
+---
+## What does this do?
 
 
-## Next we will look at functions.
+```r
+df &lt;- tibble::tibble(
+  a = rnorm(10),
+  b = rnorm(10),
+  c = rnorm(10),
+  d = rnorm(10)
+)
+
+df$a &lt;- (df$a - min(df$a, na.rm = TRUE)) / 
+  (max(df$a, na.rm = TRUE) - min(df$a, na.rm = TRUE))
+df$b &lt;- (df$b - min(df$b, na.rm = TRUE)) / 
+  (max(df$b, na.rm = TRUE) - min(df$a, na.rm = TRUE))
+df$c &lt;- (df$c - min(df$c, na.rm = TRUE)) / 
+  (max(df$c, na.rm = TRUE) - min(df$c, na.rm = TRUE))
+df$d &lt;- (df$d - min(df$d, na.rm = TRUE)) / 
+  (max(df$d, na.rm = TRUE) - min(df$d, na.rm = TRUE))
+```
+
+
+---
+## Error in copy-paste
+
+You might be able to puzzle out that this rescales each column to have a range from 0 to 1. 
+
+But did you spot the mistake? I made an error when copying-and-pasting the code for df$b: I forgot to change an a to a b. 
+
+Extracting repeated code out into a function is a good idea because it prevents you from making this type of mistake.
+
+---
+## What does this do?
+
+
+```r
+df &lt;- tibble::tibble(
+  a = rnorm(10),
+  b = rnorm(10),
+  c = rnorm(10),
+  d = rnorm(10)
+)
+
+df$a &lt;- (df$a - min(df$a, na.rm = TRUE)) / 
+  (max(df$a, na.rm = TRUE) - min(df$a, na.rm = TRUE))
+df$b &lt;- (df$b - min(df$b, na.rm = TRUE)) /            #&lt;&lt;
+  (max(df$b, na.rm = TRUE) - min(df$a, na.rm = TRUE)) #&lt;&lt;
+df$c &lt;- (df$c - min(df$c, na.rm = TRUE)) / 
+  (max(df$c, na.rm = TRUE) - min(df$c, na.rm = TRUE))
+df$d &lt;- (df$d - min(df$d, na.rm = TRUE)) / 
+  (max(df$d, na.rm = TRUE) - min(df$d, na.rm = TRUE))
+```
+
+---
+## Write a function
+
+To write a function you need to first analyse the code. How many inputs does it have?
+
+
+```r
+(df$a - min(df$a, na.rm = TRUE))/(max(df$a, na.rm = TRUE) - min(df$a, na.rm = TRUE))
+```
+
+```
+##  [1] 0.02123465 0.54616475 1.00000000 0.46179244 0.38005883 0.08444326
+##  [7] 0.00000000 0.07246454 0.12356484 0.42641593
+```
+
+-  Why is `TRUE` not an input? 
+
+-  To make the inputs more clear, it’s a good idea to rewrite the code using temporary variables with general names. Here this code only requires a single numeric vector, so I’ll call it x:
+
+
+```r
+x &lt;- df$a
+(x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+```
+
+```
+##  [1] 0.02123465 0.54616475 1.00000000 0.46179244 0.38005883 0.08444326
+##  [7] 0.00000000 0.07246454 0.12356484 0.42641593
+```
+
+---
+## Redundancy?
+
+There is some duplication in this code. We’re computing the range of the data three times, so it makes sense to do it in one step:
+
+
+```r
+rng &lt;- range(x, na.rm = TRUE)
+(x - rng[1]) / (rng[2] - rng[1])
+```
+
+```
+##  [1] 0.02123465 0.54616475 1.00000000 0.46179244 0.38005883 0.08444326
+##  [7] 0.00000000 0.07246454 0.12356484 0.42641593
+```
+
+Pulling out intermediate calculations into named variables is a good practice because it makes it more clear what the code is doing. 
+
+---
+## Turn this into a function
+
+Now that I’ve simplified the code, and checked that it still works, I can turn it into a function:
+
+
+```r
+rescale01 &lt;- function(x) {
+  rng &lt;- range(x, na.rm = TRUE)
+  (x - rng[1]) / (rng[2] - rng[1])
+}
+rescale01(c(0, 5, 10))
+```
+
+```
+## [1] 0.0 0.5 1.0
+```
+
+---
+## Use with earlier example
+
+We can simplify the original example now that we have a function:
+
+
+```r
+df$a &lt;- rescale01(df$a)
+df$b &lt;- rescale01(df$b)
+df$c &lt;- rescale01(df$c)
+df$d &lt;- rescale01(df$d)
+```
+
+Compare this with the original block of code. 
+
+
+---
+## Change easily 
+
+Another advantage of functions is that if our requirements change, we only **need to make the change in one place**.
+
+For example, we might discover that some of our variables include infinite values, and `rescale01()` fails:
+
+
+```r
+x &lt;- c(1:10, Inf)
+rescale01(x)
+```
+
+```
+##  [1]   0   0   0   0   0   0   0   0   0   0 NaN
+```
+
+Because we’ve extracted the code into a function, we only need to make the fix in one place:
+
+
+```r
+rescale01 &lt;- function(x) {
+  rng &lt;- range(x, na.rm = TRUE, finite = TRUE)
+  (x - rng[1]) / (rng[2] - rng[1])
+}
+rescale01(x)
+```
+
+```
+##  [1] 0.0000000 0.1111111 0.2222222 0.3333333 0.4444444 0.5555556 0.6666667
+##  [8] 0.7777778 0.8888889 1.0000000       Inf
+```
+
+---
+## Exercise 
+
+- Why is `TRUE` not a parameter to `rescale01()`? What would happen if `x` contained a single missing value, and `na.rm` was FALSE?
+
+- In the second variant of `rescale01()`, infinite values are left unchanged. Rewrite `rescale01()` so that `-Inf` is mapped to 0, and `Inf` is mapped to 1.
+
+- Write your own functions to compute the skewness of a numeric vector. Skewness is defined as: 
+
+$$
+Skew(x) = \frac{\frac{1}{n-2}\sum_{i=1}^{n}(x_i - \bar{x})^3}{Var(x)^{3/2}}
+$$
+
+---
+class: middle, inverse
+
+
+## Now, we will dissect the structure of a function in R
+
+source: [https://statprog-s1-2020.github.io/](https://statprog-s1-2020.github.io/)
 
 ---
 ## Functions 
@@ -705,10 +917,76 @@ function_name &lt;- function([arg1], [arg2], ...){
 #function code body
 }
 ```
-- The function arguments are optional. Function arguments are the variables passed
-to the function, used by the function's code to perform calculations. A function can take no arguments.
-- A function can also return any R primitive or object using the return(object)
-statement.
+
+- The function arguments are optional. Function arguments are the variables passed to the function, used by the function's code to perform calculations. A function can take no arguments.
+- A function can also return any R primitive or object using the `return(object)` statement.
+
+---
+## Function arguments 
+
+Functions have named arguments which potentially have default values.
+
+The _formal arguments_ are the arguments included in the
+function definition
+
+The `formals` function returns a list of all the formal
+arguments of a function 
+
+Not every function call in R makes use of all the formal
+arguments
+
+Function arguments can be missing or might have default
+values
+
+---
+## Argument matching 
+
+R functions arguments can be matched positionally or by name. So the following calls to `sd` are all equivalent.
+
+
+```r
+mydata &lt;- rnorm(100)
+ sd(mydata)
+```
+
+```
+## [1] 0.9742524
+```
+
+```r
+ sd(x = mydata)
+```
+
+```
+## [1] 0.9742524
+```
+
+```r
+ sd(x = mydata, na.rm = FALSE)
+```
+
+```
+## [1] 0.9742524
+```
+
+```r
+ sd(na.rm = FALSE, x = mydata)
+```
+
+```
+## [1] 0.9742524
+```
+
+```r
+ sd(na.rm = FALSE, mydata)
+```
+
+```
+## [1] 0.9742524
+```
+
+**But don't mess around with the order too much!**
+
 
 ---
 ## Examples 
@@ -740,6 +1018,7 @@ return(FALSE)
 
 -  **Default arguments**
 -  Function arguments can be assigned default values as follows:
+
 
 ```r
 sort_vector &lt;- function(a_vector, ascending=TRUE){
@@ -802,6 +1081,7 @@ cat(x + 20) #prints 30
 ```
 -  **Note that the local variable assignment takes precedence inside the function test over the global assignment**.
 ---
+
 ## Side effects 
 
 -  R functions have no side effects-- they cannot change the value of global variables. Example:
@@ -827,6 +1107,516 @@ cat(x) #prints 10
 ## 10
 ```
 -  **Note that x is still bound to 10 outside of test()**.
+
+---
+class: middle
+count: false
+
+# More about Functions
+
+---
+
+## Function Parts
+
+Functions are defined by two components: the arguments (`formals`) and the code (`body`). Functions are assigned names like any other object in R (using `=` or `&lt;-`)
+
+
+```r
+gcd = function(long1, lat1, long2, lat2) {
+  R = 6371 # Earth mean radius in km
+  
+  # distance in km
+  acos(sin(lat1)*sin(lat2) + cos(lat1)*cos(lat2) * cos(long2-long1)) * R
+}
+```
+
+---
+
+## Returning values
+
+There are two approaches to returning values from functions in R - explicit and implicit return values.
+
+--
+
+**Explicit** - using one or more `return` statements
+
+
+```r
+f = function(x) {
+  x + 1
+  return(x * x)
+}
+f(2)
+```
+
+```
+## [1] 4
+```
+
+--
+
+**Implicit** - return value of the last expression is returned.
+
+
+```r
+g = function(x) {
+  x + 1
+  x * x
+}
+g(3)
+```
+
+```
+## [1] 9
+```
+
+---
+
+## Returning multiple values
+
+If we want a function to return more than one value we can group things using either vectors or lists.
+
+
+```r
+f = function(x) {
+  c(x, x^2, x^3)
+}
+
+f(1:2)
+```
+
+```
+## [1] 1 2 1 4 1 8
+```
+
+
+```r
+g = function(x) {
+  list(x, "hello")
+}
+
+g(1:2)
+```
+
+```
+## [[1]]
+## [1] 1 2
+## 
+## [[2]]
+## [1] "hello"
+```
+
+---
+class: split-50
+
+## Argument names
+
+When defining a function we are also implicitly defining names for the arguments, when calling the function we can use these names to pass arguments in a alternative order.
+
+
+
+```r
+f = function(x, y, z) {
+  paste0("x=", x, " y=", y, " z=", z)
+}
+```
+
+.pull-left[
+
+```r
+f(1, 2, 3)
+```
+
+```
+## [1] "x=1 y=2 z=3"
+```
+
+```r
+f(z=1, x=2, y=3)
+```
+
+```
+## [1] "x=2 y=3 z=1"
+```
+]
+
+.pull-right[
+
+```r
+f(y=2, 1, 3)
+```
+
+```
+## [1] "x=1 y=2 z=3"
+```
+
+```r
+f(y=2, 1, x=3)
+```
+
+```
+## [1] "x=3 y=2 z=1"
+```
+]
+
+--
+
+.pad-top[
+
+
+```r
+f(1, 2, 3, 4)
+```
+
+```
+## Error in f(1, 2, 3, 4): unused argument (4)
+```
+
+```r
+f(1, 2, m=3)
+```
+
+```
+## Error in f(1, 2, m = 3): unused argument (m = 3)
+```
+
+]
+---
+
+## Argument defaults
+
+It is also possible to give function arguments default values, so that they don't need to be provided every time the function is called.
+
+
+```r
+f = function(x, y=1, z=1) {
+  paste0("x=", x, " y=", y, " z=", z)
+}
+```
+
+.pull-left[
+
+```r
+f(3)
+```
+
+```
+## [1] "x=3 y=1 z=1"
+```
+
+```r
+f(x=3)
+```
+
+```
+## [1] "x=3 y=1 z=1"
+```
+]
+
+.pull-right[
+
+```r
+f(z=3, x=2)
+```
+
+```
+## [1] "x=2 y=1 z=3"
+```
+
+```r
+f(y=2, 2)
+```
+
+```
+## [1] "x=2 y=2 z=1"
+```
+]
+
+--
+
+.pad-top[
+
+```r
+f()
+```
+
+```
+## Error in paste0("x=", x, " y=", y, " z=", z): argument "x" is missing, with no default
+```
+]
+
+---
+
+## Scope
+
+R has generous scoping rules, if it can't find a variable in the functions body, it will look for it in the next higher scope, and so on.
+
+
+```r
+y = 1
+f = function(x) {
+  x + y
+}
+
+f(3)
+```
+
+```
+## [1] 4
+```
+
+--
+
+.pad-top[]
+
+
+```r
+y = 1
+g = function(x) {
+  y = 2
+  x + y
+}
+
+g(3)
+```
+
+```
+## [1] 5
+```
+
+---
+
+Additionally, variables defined within a scope only persist for the duration of that scope, and do not overwrite variables at a higher scopes
+
+
+```r
+x = 1
+y = 1
+z = 1
+f = function() {
+    y = 2
+    g = function() {
+      z = 3
+      return(x + y + z)
+    }
+    return(g())
+}
+f()
+```
+
+```
+## [1] 6
+```
+
+```r
+c(x,y,z)
+```
+
+```
+## [1] 1 1 1
+```
+
+---
+
+## Exercise - scope
+
+What is the output of the following code? Explain why.
+
+
+```r
+z = 1
+
+f = function(x, y, z) {
+  z = x+y
+
+  g = function(m = x, n = y) {
+    m/z + n/z
+  }
+
+  z * g()
+}
+
+f(1, 2, x = 3)
+```
+
+---
+
+## Operators as functions
+
+In R, operators are actually a special type of function - using backticks around the operator we can write them as functions.
+ 
+
+```r
+`+`
+```
+
+```
+## function (e1, e2)  .Primitive("+")
+```
+
+```r
+typeof(`+`)
+```
+
+```
+## [1] "builtin"
+```
+
+--
+
+.pad-top[]
+
+
+```r
+x = 4:1
+x + 2
+```
+
+```
+## [1] 6 5 4 3
+```
+
+```r
+`+`(x, 2)
+```
+
+```
+## [1] 6 5 4 3
+```
+
+
+---
+
+## Getting Help
+
+Prefixing any function name with a `?` will open the related help file for that function.
+
+
+```r
+?`+`
+?sum
+```
+
+For functions not in the base package, you can generally see their implementation by entering the function name without parentheses (or using the `body` function).
+
+
+```r
+lm
+```
+
+```
+## function (formula, data, subset, weights, na.action, method = "qr", 
+##     model = TRUE, x = FALSE, y = FALSE, qr = TRUE, singular.ok = TRUE, 
+##     contrasts = NULL, offset, ...) 
+## {
+##     ret.x &lt;- x
+##     ret.y &lt;- y
+##     cl &lt;- match.call()
+##     mf &lt;- match.call(expand.dots = FALSE)
+##     m &lt;- match(c("formula", "data", "subset", "weights", "na.action", 
+##         "offset"), names(mf), 0L)
+##     mf &lt;- mf[c(1L, m)]
+##     mf$drop.unused.levels &lt;- TRUE
+##     mf[[1L]] &lt;- quote(stats::model.frame)
+##     mf &lt;- eval(mf, parent.frame())
+##     if (method == "model.frame") 
+##         return(mf)
+##     else if (method != "qr") 
+##         warning(gettextf("method = '%s' is not supported. Using 'qr'", 
+##             method), domain = NA)
+##     mt &lt;- attr(mf, "terms")
+##     y &lt;- model.response(mf, "numeric")
+##     w &lt;- as.vector(model.weights(mf))
+##     if (!is.null(w) &amp;&amp; !is.numeric(w)) 
+##         stop("'weights' must be a numeric vector")
+##     offset &lt;- model.offset(mf)
+##     mlm &lt;- is.matrix(y)
+##     ny &lt;- if (mlm) 
+##         nrow(y)
+##     else length(y)
+##     if (!is.null(offset)) {
+##         if (!mlm) 
+##             offset &lt;- as.vector(offset)
+##         if (NROW(offset) != ny) 
+##             stop(gettextf("number of offsets is %d, should equal %d (number of observations)", 
+##                 NROW(offset), ny), domain = NA)
+##     }
+##     if (is.empty.model(mt)) {
+##         x &lt;- NULL
+##         z &lt;- list(coefficients = if (mlm) matrix(NA_real_, 0, 
+##             ncol(y)) else numeric(), residuals = y, fitted.values = 0 * 
+##             y, weights = w, rank = 0L, df.residual = if (!is.null(w)) sum(w != 
+##             0) else ny)
+##         if (!is.null(offset)) {
+##             z$fitted.values &lt;- offset
+##             z$residuals &lt;- y - offset
+##         }
+##     }
+##     else {
+##         x &lt;- model.matrix(mt, mf, contrasts)
+##         z &lt;- if (is.null(w)) 
+##             lm.fit(x, y, offset = offset, singular.ok = singular.ok, 
+##                 ...)
+##         else lm.wfit(x, y, w, offset = offset, singular.ok = singular.ok, 
+##             ...)
+##     }
+##     class(z) &lt;- c(if (mlm) "mlm", "lm")
+##     z$na.action &lt;- attr(mf, "na.action")
+##     z$offset &lt;- offset
+##     z$contrasts &lt;- attr(x, "contrasts")
+##     z$xlevels &lt;- .getXlevels(mt, mf)
+##     z$call &lt;- cl
+##     z$terms &lt;- mt
+##     if (model) 
+##         z$model &lt;- mf
+##     if (ret.x) 
+##         z$x &lt;- x
+##     if (ret.y) 
+##         z$y &lt;- y
+##     if (!qr) 
+##         z$qr &lt;- NULL
+##     z
+## }
+## &lt;bytecode: 0x000001da7e28b2b8&gt;
+## &lt;environment: namespace:stats&gt;
+```
+
+---
+
+## Less Helpful Examples
+
+
+```r
+list
+```
+
+```
+## function (...)  .Primitive("list")
+```
+
+```r
+`[`
+```
+
+```
+## .Primitive("[")
+```
+
+```r
+sum
+```
+
+```
+## function (..., na.rm = FALSE)  .Primitive("sum")
+```
+
+```r
+`+`
+```
+
+```
+## function (e1, e2)  .Primitive("+")
+```
 
 ---
 # Acknowledgments
@@ -880,6 +1670,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable

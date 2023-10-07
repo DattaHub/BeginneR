@@ -18,11 +18,16 @@ sapply(load.lib,library,character=TRUE)
 
 library("dplyr")
 
-## -----Use the cats data ----------------------------------------------
+##----- Use the cats data ----------------------------------------------
 
 setwd("~/GitHub/BeginneR/R codes")
 
 cats <- read.csv("data/herding-cats-small.csv")
+
+
+## Alternatively
+
+cats <- read.csv("https://raw.githubusercontent.com/AnnArborRUserGroup/AARUG-R-workshop/gh-pages/data/herding-cats-small.csv")
 
 
 ##----Subsetting data : 'select'--------------------------------------------------------------------

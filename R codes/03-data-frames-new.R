@@ -1,8 +1,27 @@
 
+## From `R` package 
+
+# Reading data that is already in an `R` package. 
+# Sometimes you need to install a package, and sometimes it is already pre-installed in R. 
+# If you type `data()` into your console, you'll see a list of datasets. 
+
+data()
+
+# 1. Loading 
+data("mtcars")
+# 2. Print
+head(mtcars)
+
+## From an URL 
+# You can also read a CSV file directly from an URL where it is hosted. 
+
+arbuthnot <- read.csv("https://www.openintro.org/data/csv/arbuthnot.csv")
+head(arbuthnot)
+
+## Reading an external CSV file 
 ## ---- Current working directory ---------------------------------------------
 # To view your current working directory use the `getwd()` command
 getwd()
-
 
 ## ---- Setting working Directory ------------------------------------------------------
 # To set you working directory, use the `setwd()` command. 
@@ -16,15 +35,14 @@ setwd("~/GitHub/BeginneR/R codes")
 # R function  `read.csv()` to load the data file into memory 
 # 'data' is the subfolder 
 
-cats <- read.csv(file = 'data/herding-cats-small.csv', 
+oscars <- read.csv(file = 'data/herding-oscars-small.csv', 
                  stringsAsFactors = TRUE)
 
 
 ## -- Check data ----------------------------------------------------------------------
 # If we want to check that our data has been loaded, we can print the
 # variable's value
-
-cats
+oscars
 
 
 ## ---- What's inside? ---------------------------------------------------------
@@ -32,17 +50,23 @@ cats
 # thing - instead use the `head` command to view the first six lines or
 # the `View` command to open the dataset
 
-head(cats)
+head(oscars)
 
-head(cats, n = 2)
-View(cats)
+head(oscars, n = 2)
+View(oscars)
+
+
+### Now, we will read a dataset and look at its properties. 
+
+oscars <- read.csv("https://www.openintro.org/data/csv/oscars.csv", 
+                   stringsAsFactors = TRUE)
 
 
 ## ------Structure of the data ------------------------------------------------------------------
 # `data.frame` is actually a `list` of column vectors of identical lengths
 # The `str()` function is useful to inspect the data types of the columns.
 
-str(cats)
+str(oscars)
 
 # *Remark* By default, `data.frame` converts (= coerces) columns 
 # that contain characters (i.e., text) into the `factor` data type.
@@ -54,76 +78,76 @@ str(cats)
 # If we want to extract some specific data from it,
 # we need to specify the "coordinates" (i.e. [row, column]).
 
-cats[1, 2]   # first element in the 2nd column of the data frame
-cats[1, 6]   # first element in the 6th column
-cats[1:3, 7] # first three elements in the 7th column
-cats[3, ]    # the 3rd element for all columns
-cats[, 7]    # the entire 7th column
+oscars[1, 2]   # first element in the 2nd column of the data frame
+oscars[1, 6]   # first element in the 6th column
+oscars[1:3, 7] # first three elements in the 7th column
+oscars[10, ]    # the 3rd element for all columns
+oscars[, 7]    # the entire 7th column
 
-head_meta <- cats[1:6, ] # Row 1-6 which is the same as head
+head_meta <- oscars[1:6, ] # Row 1-6 which is the same as head
 
 
 ## ------operations on a particular column------------------------------------------------------------------
 ## For larger data-sets, difficult to remember the column number 
 ## for a particular variable - better to call them by name 
 
-colnames(cats)
-cats$weight
+colnames(oscars)
+oscars$age
 
-cats$wander_dist
+oscars$birth_y
 
 
 ## ----Multiple columns--------------------------------------------------------------------
 # Select more than one columns use the square brackets
 
-cats[ , c("weight", "coat", "sex")]
+oscars[ , c("age", "birth_pl", "age")]
 
 
 ## ------------------------------------------------------------------------
 # column name _and_ select specific rows of interest
 # use logical statements to select and filter items from a `data.frame`
 
-cats[4:7, c("weight", "coat")]
+oscars[4:7, c("age", "birth_pl")]
 
 
 ## ------------------------------------------------------------------------
-cats$coat == "black"
+oscars$birth_pl == "Virginia"
 
-cats[cats$coat == "black", ]
+oscars[oscars$birth_pl == "Virginia", ]
 
-cats[cats$sex == "female", ]
+oscars[oscars$age == 22, ]
 
 ## ------------------------------------------------------------------------
 # The logical statement returns a vector of `TRUE` and `FALSE` values. 
-which(cats$coat == "black")
+which(oscars$birth_pl == "Virginia")
 
 
 ## ----use 'which'--------------------------------------------------------------------
 # `which()` finds the indexes of records meeting a logical statement
 
-black_cat_idx = which(cats$coat == "black")
+va_oscars_idx = which(oscars$birth_pl == "Virginia")
 
-which(cats$coat == "black")
+which(oscars$birth_pl == "Virginia")
 
 ## ------------------------------------------------------------------------
 ## We could also write this ugly statement 
 
-cats[which(cats$coat == "black"), ]
+oscars[which(oscars$birth_pl == "Virginia"), ]
 
-cats[black_cat_idx,]
+oscars[va_oscars_idx,]
 
 ## ------------------------------------------------------------------------
 # We can combine logical statements and index statements
 
-cats[cats$coat == "black", c("coat", "weight")]
+oscars[oscars$birth_pl == "Virginia", c("name", "birth_pl", "age")]
 
 
 
 ## ------Logical operators------------------------------------------------------------------
 # Use `&`, the symbol for "and", and `|`, the symbol for "or".
 
-cats$coat == "black" & cats$roamer == "no"
-cats[cats$coat == "black" & cats$roamer == "no", ]
+oscars$birth_pl == "Virginia" & oscars$award == "Best actor"
+oscars[oscars$birth_pl == "Virginia" & oscars$award == "Best actor", ]
 
 
 ## Factors
@@ -136,20 +160,20 @@ cats[cats$coat == "black" & cats$roamer == "no", ]
 # actually integers under the hood.
 
 ## ------------------------------------------------------------------------
-str(cats)
+str(oscars)
 
 
 ## ------------------------------------------------------------------------
-levels(cats$coat)
-nlevels(cats$coat)
+levels(oscars$birth_pl)
+nlevels(oscars$birth_pl)
 
 ## 
 
-cats$coat <- as.factor(cats$coat)
+oscars$birth_pl <- as.factor(oscars$birth_pl)
 
-levels(cats$coat)
+levels(oscars$birth_pl)
 
-nlevels(cats$coat)
+nlevels(oscars$birth_pl)
 ## ---- Ordered vs Unorderd ---------------------------------------------------------
 # Sometimes, the order of the factors does not matter, other times you might want
 # to specify the order.
