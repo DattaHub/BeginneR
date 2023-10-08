@@ -6,6 +6,8 @@ output:
       toc: true
       toc_float: true
       number_sections: false
+      theme: united
+      code-copy: true
 fontsize: 12pt
 theme: united
 geometry: margin=1in
@@ -138,6 +140,7 @@ mutate(cats, new_var_1 = age + weight, new_var_2 = age * weight)
 
 
 ## Pipes
+
 You'll often find yourself needing to use multiple functions in a row to organize some data that you're working on. This can sometimes lead to dense code that is difficult to read.
 
 ```{r}
@@ -248,6 +251,29 @@ cats %>%
   group_by(coat) %>%
   mutate(centered_weight = weight - mean(weight))
 ```
+
+
+> ### Challenge 
+1.   Read the American Community Survey Data (2012) from [https://www.openintro.org/data/index.php?data=acs12](https://www.openintro.org/data/index.php?data=acs12). Use the `read.csv` function taught before. 2.   Look at the structure of the data-set by using the `str` function. 
+3.   Calculate the mean annual income (`income`) by gender (`gender`) and birth quarter (`birth_qrtr`).
+4.   What other variables could be of interest? 
+
+
+```{r}
+#| echo: true
+#| code-fold: true
+#| code-summary: "expand for full code"
+
+acs <- read.csv("https://www.openintro.org/data/csv/acs12.csv")
+str(acs)
+
+library(dplyr)
+acs %>%
+  group_by(birth_qrtr) %>%
+  summarize(mean_income = mean(income, na.rm = T))
+```
+
+
 
 # Going further
 
