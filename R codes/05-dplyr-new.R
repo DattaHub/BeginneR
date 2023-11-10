@@ -11,6 +11,7 @@ load.lib<-c("dplyr", "readr", "magrittr","zoo","reshape2",
             "ggplot2")
 install.lib <- load.lib[!load.lib %in% installed.packages()]
 for(lib in install.lib) install.packages(lib,dependencies=TRUE)
+
 sapply(load.lib,library,character=TRUE)
 
 
@@ -29,6 +30,7 @@ cats <- read.csv("data/herding-cats-small.csv")
 
 cats <- read.csv("https://raw.githubusercontent.com/AnnArborRUserGroup/AARUG-R-workshop/gh-pages/data/herding-cats-small.csv")
 
+View(cats)
 
 ##----Subsetting data : 'select'--------------------------------------------------------------------
 
@@ -86,16 +88,16 @@ arrange(cats, coat, sex)
 # `mutate` allows us to do this relatively easily.
 # Let's say I don't want a lot of decimal places in one of variable
 
-mutate(cats, weight = round(weight, 2))
+mutate(cats, weight = round(weight, 2)) -> cats_new
 
-select(cats, -sex)
+select(cats, -street)
 
 
 ## ------Transforming------------------------------------------------------------------
 # generating a new column based on values that are already in the dataset
 # let's say you want to add two variables together
 
-mutate(cats, new_variable = age + weight)
+mutate(cats, new_variable = age + weight) -> cats_new
 
 # you can include as many new variables as you want, separated by a comma
 
@@ -178,7 +180,9 @@ cats %>%
   filter(coat == "black") %>%
   select(cat_id)
 
-
+# %>% (ctrl + shift + M)
+  
+  
 ## ----Summarize --------------------------------------------------------------------
 # While `mutate` creates new columns, 
 # it's often useful to summarize multiple rows into a single value. 
@@ -199,7 +203,7 @@ cats %>% summarize(mean_weight = mean(weight))
 
 cats %>%
   group_by(coat) %>%
-  summarize(mean_weight = mean(weight))
+  summarize(mean_weight = mean(weight), sd_weight = sd(weight))
 
 
 ## --------Mutate and group_by----------------------------------------------------------------
@@ -210,4 +214,6 @@ cats %>%
 cats %>%
   group_by(coat) %>%
   mutate(centered_weight = weight - mean(weight))
+
+
 
